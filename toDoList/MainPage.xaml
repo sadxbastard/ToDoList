@@ -3,10 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toDoList="clr-namespace:toDoList"
              x:Class="toDoList.MainPage"
-             x:DataType="toDoList:PersonViewModel">
+             x:DataType="toDoList:ViewModel">
 
     <ContentPage.BindingContext>
-        <toDoList:PersonViewModel/>
+        <toDoList:ViewModel/>
     </ContentPage.BindingContext>
 
     <Grid>
@@ -23,14 +23,22 @@
                Grid.Column="0"
                Margin="10"
                Placeholder="Название задачи"
+               x:Name="inputText"
                Text="{Binding Surname}"/>
         <Picker Grid.Row="0"
                 Grid.Column="1"
-                Margin="10"></Picker>
+                Margin="10"
+                VerticalOptions="End"
+                ItemsSource="{Binding MyColors}"></Picker>
         <Button Grid.Row="0"
                 Grid.Column="2"
                 Margin="10"
-                Text="Добавить"></Button>
+                Text="Добавить"
+                Clicked="ClickOnAddButton"
+                Command="{Binding AddCommand}"
+                CommandParameter="{Binding Source={x:Reference inputText}, Path=Text}"></Button>
+        <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3">
+        </CheckBox>
         
         
     </Grid>
