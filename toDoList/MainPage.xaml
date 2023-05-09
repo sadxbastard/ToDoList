@@ -61,7 +61,6 @@
                                    Margin="10"
                                    Text="{Binding Text}"
                                    TextDecorations="{Binding ItemTextDecorations}">
-                                
                             </Label>
                             <BoxView Grid.Column="2"
                                      HeightRequest="40"

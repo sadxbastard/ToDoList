@@ -33,7 +33,6 @@ public class ColorItem
     {
         return Name;
     }
-
 }
 
 public class ItemViewModel : INotifyPropertyChanged
@@ -87,13 +86,15 @@ public class ItemViewModel : INotifyPropertyChanged
 }
 class ViewModel : INotifyPropertyChanged
 {
+    public ICommand AddCommand { get; }
+    public ICommand DeleteCommand { get; }
     public ViewModel()
     {
         AddCommand = new Command<string>(obj =>
         {
             Items.Add(new ItemViewModel{ Text = obj, Color = ChosenColor });
         },
-        obj => !string.IsNullOrEmpty(obj));
+        obj => !string.IsNullOrWhiteSpace(obj));
 
         DeleteCommand = new Command<ItemViewModel>(obj =>
         {
@@ -118,11 +119,6 @@ class ViewModel : INotifyPropertyChanged
 
     public ObservableCollection<ItemViewModel> Items { get; set; } = new ObservableCollection<ItemViewModel>();
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-
     public ObservableCollection<ColorItem> MyColors { get; set; } = new ObservableCollection<ColorItem>
     {
         new ColorItem { Name = "Без категории", Value = Colors.White },
@@ -131,17 +127,10 @@ class ViewModel : INotifyPropertyChanged
         new ColorItem { Name = "Красный", Value = Colors.Red },
         new ColorItem { Name = "Зеленый", Value = Colors.Green },
     };
-    
-    public ICommand AddCommand { get; }
-    public ICommand DeleteCommand { get; }
-    public ICommand DoneCommand { get; }
 
-    //protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
-    //{
-    //    if (EqualityComparer<T>.Default.Equals(field, value)) return false;
-    //    field = value;
-    //    OnPropertyChanged(propertyName);
-    //    return true;
-    //}
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }
 
