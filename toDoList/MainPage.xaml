@@ -23,13 +23,13 @@
                Grid.Column="0"
                Margin="10"
                Placeholder="Название задачи"
-               x:Name="inputText"
-               Text="{Binding Surname}"/>
+               x:Name="inputText"/>
         <Picker Grid.Row="0"
                 Grid.Column="1"
                 Margin="10"
                 VerticalOptions="End"
-                ItemsSource="{Binding MyColors}"></Picker>
+                ItemsSource="{Binding MyColors}"
+                SelectedItem="{Binding ChosenColor}"></Picker>
         <Button Grid.Row="0"
                 Grid.Column="2"
                 Margin="10"
@@ -37,8 +37,51 @@
                 Clicked="ClickOnAddButton"
                 Command="{Binding AddCommand}"
                 CommandParameter="{Binding Source={x:Reference inputText}, Path=Text}"></Button>
-        <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3">
-        </CheckBox>
+        <ListView x:Name="ListView"
+                  Grid.Row="1"
+                  Grid.ColumnSpan="3"
+                  Margin="10"
+                  ItemsSource="{Binding Items}">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="toDoList:ItemViewModel">
+                    <ViewCell>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+                            <CheckBox Grid.Column="0"
+                                      x:Name="myCheckBox"
+                                      CheckedChanged="OnCheckBoxCheckedChanged"
+                                      Margin="10"></CheckBox>
+                            <Label Grid.Column="1"
+                                   VerticalTextAlignment="Center"
+                                   Margin="10"
+                                   Text="{Binding Text}"
+                                   TextDecorations="{Binding ItemTextDecorations}">
+                                
+                            </Label>
+                            <BoxView Grid.Column="2"
+                                     HeightRequest="40"
+                                     WidthRequest="40"
+                                     CornerRadius="10"
+                                     Margin="10"
+                                     Color="{Binding Color.Value}"></BoxView>
+                            <Button Grid.Column="3"
+                                    Margin="10"
+                                    Text="Удалить"
+                                    CommandParameter="{Binding .}">
+                                <Button.Command>
+                                    <x:Binding Path="BindingContext.DeleteCommand" Source="{x:Reference ListView}"></x:Binding>
+                                </Button.Command>
+                            </Button>
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
         
         
     </Grid>

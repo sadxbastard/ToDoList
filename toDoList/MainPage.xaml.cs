@@ -16,6 +16,13 @@ public partial class MainPage : ContentPage
     {
         inputText.Text = string.Empty;
     }
+    private void OnCheckBoxCheckedChanged(object sender, CheckedChangedEventArgs e)
+    {
+        if (sender is CheckBox { BindingContext: ItemViewModel myItem })
+        {
+            myItem.ItemTextDecorations = e.Value ? TextDecorations.Strikethrough : TextDecorations.None;
+        }
+    }
 }
 
 public class ColorItem
@@ -28,20 +35,88 @@ public class ColorItem
     }
 
 }
+
+public class ItemViewModel : INotifyPropertyChanged
+{
+    private string _text;
+    private ColorItem _color;
+    private TextDecorations itemTextDecorations;
+
+    public string Text
+    {
+        get => _text;
+        set
+        {
+            if(Equals(value, _text)) return;
+            _text = value;
+            OnPropertyChanged(nameof(Text));
+        }
+    }
+
+    public ColorItem Color
+    {
+        get => _color;
+        set
+        {
+            if (Equals(value, _color)) return;
+            _color = value;
+            OnPropertyChanged(nameof(Color));
+        }
+    }
+
+    public TextDecorations ItemTextDecorations
+    {
+        get => itemTextDecorations;
+        set
+        {
+            if (itemTextDecorations != value)
+            {
+                itemTextDecorations = value;
+                OnPropertyChanged(nameof(ItemTextDecorations));
+            }
+        }
+    }
+
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+}
 class ViewModel : INotifyPropertyChanged
 {
-	private string _surname;
-	public string Surname
-	{
-		get => _surname;
+    public ViewModel()
+    {
+        AddCommand = new Command<string>(obj =>
+        {
+            Items.Add(new ItemViewModel{ Text = obj, Color = ChosenColor });
+        },
+        obj => !string.IsNullOrEmpty(obj));
+
+        DeleteCommand = new Command<ItemViewModel>(obj =>
+        {
+            Items.Remove(obj);
+        });
+    }
+
+    private ColorItem _chosenColor;
+
+    public ColorItem ChosenColor
+    {
+        get => _chosenColor;
         set
-		{
-			if (_surname == value) return;
-			_surname = value;
-			OnPropertyChanged(nameof(Surname));
-		}
-	}
+        {
+            if(Equals(value, _chosenColor)) return;
+            _chosenColor = value;
+            OnPropertyChanged(nameof(ChosenColor));
+        }
+    }
+
     public event PropertyChangedEventHandler PropertyChanged;
+
+    public ObservableCollection<ItemViewModel> Items { get; set; } = new ObservableCollection<ItemViewModel>();
 
     protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
     {
@@ -56,8 +131,17 @@ class ViewModel : INotifyPropertyChanged
         new ColorItem { Name = "Красный", Value = Colors.Red },
         new ColorItem { Name = "Зеленый", Value = Colors.Green },
     };
+    
     public ICommand AddCommand { get; }
     public ICommand DeleteCommand { get; }
     public ICommand DoneCommand { get; }
+
+    //protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+    //{
+    //    if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+    //    field = value;
+    //    OnPropertyChanged(propertyName);
+    //    return true;
+    //}
 }
 
